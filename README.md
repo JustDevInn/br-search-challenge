@@ -5,7 +5,7 @@ Your task is to build a UI for searching retreats. We’ve provided a base that 
 ## Instructions
 * Download the repo
 * Add a .env file with the API_URL
-* Start the app with `rpm run dev` and open at http://localhost:3000/search
+* Start the app with `npm run dev` and open at http://localhost:3000/search
 * Inspect the data in the DevTools console to get a feel of what you will work with, especially the `searchState` (also try with some of the sample URLs below)
 * Focus on the core tasks; if you have time, look into the bonuses. We’re not even sure that the bonuses can be completed in the allocated time, so don’t sweat it if you aren’t able to finish it all.
 
