@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const SearchPage = ({ searchResults, searchState }) => {
   console.log('SearchPage Props', searchResults, searchState);
+
+  useEffect(() => {
+    if (searchResults?.hits) {
+      searchResults.hits.forEach((retreat) => {
+        console.log("Image URL:", retreat.photos?.[0]?.url);
+      });
+    }
+  }, [searchResults]); // Only runs when searchResults change
 
   // Get selected category and location from searchState
   const selectedCategory = searchState?.scopes?.category || "None selected";
@@ -39,13 +47,13 @@ const SearchPage = ({ searchResults, searchState }) => {
             {/* Image */}
             <div className="flex-1 min-w-[250px] flex justify-center items-center">
                 <div className="w-full h-[200px] md:w-[300px] md:h-[220px] flex justify-center items-center">
-                {console.log("Image URL:", retreat.photos[0]?.url)};
                 {retreat.photos?.[0]?.url ? (
                 <img 
                 id={retreat.photos[0].id}
                 src={`https://stage.bookretreats.com/${retreat.photos[0]?.url}`} 
-                alt={retreat.photos[0].altText || "Retreat Image"} 
-                  className="w-full h-[200px] md:w-[300px] md:h-[220px] object-cover"
+                alt={retreat.photos[0].altText || "Retreat Image"}
+                loading="lazy" 
+                className="w-full h-[200px] md:w-[300px] md:h-[220px] object-cover"
                 />
                 
               ) : (
