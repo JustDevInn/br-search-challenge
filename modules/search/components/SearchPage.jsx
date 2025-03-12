@@ -10,10 +10,10 @@ const SearchPage = ({ searchResults, searchState }) => {
   const router = useRouter(); // For navigation
   const [searchQuery, setSearchQuery] = useState(searchState?.searchQuery || "");
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(searchState?.scopes?.category || "None selected");
+  const [selectedCategory, setSelectedCategory] = useState(searchState?.scopes?.category || "");
   const [locationQuery, setLocationQuery] = useState("");
   const [locationResults, setLocationResults] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(searchState?.scopes?.location || "None selected");
+  const [selectedLocation, setSelectedLocation] = useState(searchState?.scopes?.location || "");
   const [retreats, setRetreats] = useState(searchResults?.hits || []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -31,6 +31,7 @@ const SearchPage = ({ searchResults, searchState }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
   // Load categories once
   useEffect(() => {
     const fetchCategories = async () => {
@@ -47,6 +48,13 @@ const SearchPage = ({ searchResults, searchState }) => {
 
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (!selectedLocation) return; // Prevents running when empty
+  
+    updateResults(); // Update results when selectedLocation is updated
+  }, [selectedLocation]); // Runs when `selectedLocation` changes
+  
 
   // Ensure initial results are shown
   useEffect(() => {
@@ -70,6 +78,8 @@ const SearchPage = ({ searchResults, searchState }) => {
     router.push(`/search?${queryString}`);
   };
 
+
+
   const handleLocationSearch = async (query) => {
     setLocationQuery(query);
     if (!query.trim()) {
@@ -84,14 +94,20 @@ const SearchPage = ({ searchResults, searchState }) => {
     }
   };
 
+
+
+
+
+
+
   return (
     <div className="max-w-5xl mx-auto px-4">
-      <h1 className="w-full text-2xl font-semibold my-4 flex justify-center">
-        Retreats
+      <h1 className="w-full text-4xl font-semibold my-4 flex justify-center text-[#31A6FF] pt-20 pb-10">
+        <strong>Search for retreats</strong>
       </h1>
 
       {/* Search Form */}
-      <form onSubmit={(e) => e.preventDefault()} className="mb-4 flex flex-row gap-4">
+      <form onSubmit={(e) => e.preventDefault()} className="mb-4 flex flex-col md:flex-row gap-4 w-full">
         {/* Search Bar */}
         <input
           type="text"
@@ -101,12 +117,12 @@ const SearchPage = ({ searchResults, searchState }) => {
             setSearchQuery(e.target.value);
             updateResults();
           }}
-          className="border p-2 w-[300px]"
+          className="border p-2"
         />
 
         {/* Category Dropdown */}
         <select
-          className="border p-2 w-[300px] text-gray-500"
+          className="border p-2 text-gray-500"
           value={selectedCategory}
           onChange={(e) => {
             setSelectedCategory(e.target.value);
@@ -128,7 +144,7 @@ const SearchPage = ({ searchResults, searchState }) => {
             placeholder="Filter by location..."
             value={locationQuery}
             onChange={(e) => handleLocationSearch(e.target.value)}
-            className="border p-2 w-[300px] text-gray-500"
+            className="border p-2 text-gray-500"
           />
           {/* Dropdown */}
           {locationResults.length > 0 && (
@@ -140,7 +156,6 @@ const SearchPage = ({ searchResults, searchState }) => {
                     setSelectedLocation(location.label);
                     setLocationQuery(location.label);
                     setLocationResults([]);
-                    updateResults();
                   }}
                   className="p-2 hover:bg-gray-200 cursor-pointer"
                 >
@@ -153,9 +168,9 @@ const SearchPage = ({ searchResults, searchState }) => {
       </form>
 
       {/* Selected Filters */}
-      <div className="mb-4">
-        <p>Selected Category: {selectedCategory}</p>
-        <p>Selected Location: {selectedLocation}</p>
+      <div className={`text-[#676767] mb-4 ${!selectedCategory && !selectedLocation ? "hidden" : ""}`}>
+        {selectedCategory && <p>Selected Category: {selectedCategory}</p>}
+        {selectedLocation && <p>Selected Location: {selectedLocation}</p>}
       </div>
 
       {/* Error Message */}
@@ -169,23 +184,36 @@ const SearchPage = ({ searchResults, searchState }) => {
           {retreats.length > 0 ? (
             retreats.map((retreat) => (
               <li key={retreat.id}>
+
+
 {/* Card */}
-<div className="w-full flex flex-col md:flex-row mx-auto p-2 m-5 border border-gray-400 gap-4 flex-wrap">
+<div className="w-full rounded-xl flex flex-col md:flex-row mx-auto p-2 m-5 gap-4 flex-wrap
+bg-[#F8FAFC]">
   
   {/* Card info */}
-  <div className="flex-1 min-w-[250px] flex flex-col justify-start items-start">
-    <h2 className="text-lg font-semibold">{retreat.label}</h2>
-    <p className="text-gray-600">{retreat.location?.[0]}</p>
+  <div className="md:w-1/2 order-2 md:order-1">
+  <div className="flex-1 min-w-[250px] flex flex-col justify-start items-start py-2">
+    <p className="text-[#0F182A]"><strong>{retreat.name}</strong></p>
+    <p className="text-[#0F182A] text-sm">{retreat.location?.[0]}</p>
+    <p className="text-[#676767] text-sm">{retreat.organizer}</p>
   </div>
-
+  <div>
+  <p className="text-[#0F182A] text-xs p-1 md:px-2 text-justify">{retreat.description}</p>
+  </div>
+  </div>
   {/* Image */}
-  <div className="flex-1 min-w-[250px] flex justify-center items-center">
-    <div className="w-full h-[200px] md:w-[300px] md:h-[220px] flex justify-center items-center">
+  <div className="flex-1 min-w-[250px] flex flex-col justify-center items-center order-1 md:order-2">
+    <div className="w-full flex flex-row justify-between p-2">
+    <div className="text-[#676767]">${Math.floor(retreat.dates[0].priceFrom)},-</div>
+    <div className="text-[#31A6FF]"><strong>{retreat.dates[0].startDate}</strong></div>
+    </div>
+    <div className="w-full flex justify-end items-center">
       {retreat.photos?.[0]?.url ? (
         <img
           src={`https://stage.bookretreats.com/${retreat.photos[0].url}`}
+          id={retreat.photos[0].id}
           alt={retreat.photos[0].altText || "Retreat Image"}
-          className="w-full h-[200px] md:w-[300px] md:h-[220px] object-cover"
+          className="w-full h-[200px] md:h-[220px] object-cover"
         />
       ) : (
         <div className="w-full h-[200px] md:w-[300px] md:h-[220px] bg-gray-300 flex justify-center items-center">
@@ -208,5 +236,4 @@ const SearchPage = ({ searchResults, searchState }) => {
 };
 
 export default SearchPage;
-
 
