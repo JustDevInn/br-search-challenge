@@ -10,15 +10,21 @@ const SearchPage = ({ searchResults, searchState }) => {
   const router = useRouter(); // For navigation
   const [searchQuery, setSearchQuery] = useState(searchState?.searchQuery || "");
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(searchState?.scopes?.category || "");
+
+  const [categoriesQuery, setCategoriesQuery] = useState("");
+  const [categoriesResults, setCategoriesResults] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState(searchState?.scopes?.category || "");
+
   const [locationQuery, setLocationQuery] = useState("");
   const [locationResults, setLocationResults] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(searchState?.scopes?.location || "");
+
   const [retreats, setRetreats] = useState(searchResults?.hits || []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const locationDropdownRef = useRef(null);
+  const categoriesDropdownRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -31,6 +37,16 @@ const SearchPage = ({ searchResults, searchState }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (categoriesDropdownRef.current && !categoriesDropdownRef.current.contains(event.target)) {
+        setCategoriesResults([]);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Load categories once
   useEffect(() => {
@@ -50,11 +66,11 @@ const SearchPage = ({ searchResults, searchState }) => {
   }, []);
 
   useEffect(() => {
-    if (!selectedLocation) return; // Prevents running when empty
+    if (!selectedCategories && !selectedLocation) return;
+    updateResults();  
+  }, [selectedCategories, selectedLocation]);
   
-    updateResults(); // Update results when selectedLocation is updated
-  }, [selectedLocation]); // Runs when `selectedLocation` changes
-  
+
 
   // Ensure initial results are shown
   useEffect(() => {
@@ -68,7 +84,7 @@ const SearchPage = ({ searchResults, searchState }) => {
     const updatedSearchState = {
       ...searchState,
       scopes: {
-        category: selectedCategory !== "None selected" ? selectedCategory : undefined,
+        category: selectedCategories !== "None selected" ? selectedCategories : undefined,
         location: selectedLocation !== "None selected" ? selectedLocation : undefined,
       },
       searchQuery: searchQuery || undefined,
@@ -79,7 +95,21 @@ const SearchPage = ({ searchResults, searchState }) => {
   };
 
 
+  const handleCategorySearch = async (query) => {
+    setCategoriesQuery(query);
+    if (!query.trim()) {
+      setCategoriesResults([]);
+      return;
+    }
 
+    const response = await fetch(`/api/categories?query=${query}`);
+    if (response.ok) {
+      const data = await response.json();
+      setCategoriesResults(data.items || []);
+    }
+  };
+
+  
   const handleLocationSearch = async (query) => {
     setLocationQuery(query);
     if (!query.trim()) {
@@ -121,22 +151,33 @@ const SearchPage = ({ searchResults, searchState }) => {
         />
 
         {/* Category Dropdown */}
-        <select
+        <div className="relative" ref={categoriesDropdownRef}>
+        <input
+          type="text"
+          placeholder="Filter by category..."
+          value={categoriesQuery}
+          onChange={(e) => handleCategorySearch(e.target.value)}
           className="border p-2 text-gray-500"
-          value={selectedCategory}
-          onChange={(e) => {
-            setSelectedCategory(e.target.value);
-            updateResults();
-          }}
-        >
-          <option value="None selected">Select a Category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.label}>
-              {category.label}
-            </option>
-          ))}
-        </select>
-
+        />
+           {/* Dropdown */}
+           {categoriesResults.length > 0 && (
+            <ul className="absolute bg-white text-black border t-1 w-full z-10 shadow-md">
+              {categoriesResults.map((category) => (
+                <li
+                  key={category.id}
+                  onClick={() => {
+                    setSelectedCategories(category.name);
+                    setCategoriesQuery(category.name);
+                    setCategoriesResults([]);
+                  }}
+                  className="p-2 hover:bg-gray-200 cursor-pointer"
+                >
+                  {category.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         {/* Location Filter */}
         <div className="relative" ref={locationDropdownRef}>
           <input
@@ -148,7 +189,7 @@ const SearchPage = ({ searchResults, searchState }) => {
           />
           {/* Dropdown */}
           {locationResults.length > 0 && (
-            <ul className="absolute bg-white text-black border mt-1 w-full z-10 shadow-md">
+            <ul className="absolute bg-white text-black border t-1 w-full z-10 shadow-md">
               {locationResults.map((location) => (
                 <li
                   key={location.id}
@@ -165,11 +206,13 @@ const SearchPage = ({ searchResults, searchState }) => {
             </ul>
           )}
         </div>
+
+        <input type="reset" value="Reset" className="bg-[#31A6FF] text-white w-[100px] rounded text-lg"></input>
       </form>
 
       {/* Selected Filters */}
-      <div className={`text-[#676767] mb-4 ${!selectedCategory && !selectedLocation ? "hidden" : ""}`}>
-        {selectedCategory && <p>Selected Category: {selectedCategory}</p>}
+      <div className={`text-[#676767] mb-4 ${!selectedCategories && !selectedLocation ? "hidden" : ""}`}>
+        {selectedCategories && <p>Selected Category: {selectedCategories}</p>}
         {selectedLocation && <p>Selected Location: {selectedLocation}</p>}
       </div>
 
