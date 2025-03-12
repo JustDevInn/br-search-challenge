@@ -137,7 +137,7 @@ const SearchPage = ({ searchResults, searchState }) => {
       </h1>
 
       {/* Search Form */}
-      <form onSubmit={(e) => e.preventDefault()} className="mb-4 flex flex-col md:flex-row gap-4 w-full">
+      <form onSubmit={(e) => e.preventDefault()} className="mb-4 flex flex-col md:flex-row gap-4 w-full justify-center items-center">
         {/* Search Bar */}
         <input
           type="text"
@@ -147,7 +147,7 @@ const SearchPage = ({ searchResults, searchState }) => {
             setSearchQuery(e.target.value);
             updateResults();
           }}
-          className="border p-2"
+          className="border p-2 text-gray-500 capitalize"
         />
 
         {/* Category Dropdown */}
@@ -206,8 +206,22 @@ const SearchPage = ({ searchResults, searchState }) => {
             </ul>
           )}
         </div>
-
-        <input type="reset" value="Reset" className="bg-[#31A6FF] text-white w-[100px] rounded text-lg"></input>
+        <button
+          type="button"
+          onClick={() => {
+          setSearchQuery("");
+          setSelectedCategories("");
+          setCategoriesQuery("");
+          setCategoriesResults([]);
+          setSelectedLocation("");
+          setLocationQuery("");
+          setLocationResults([]);
+          updateResults();
+          }}
+          className="bg-[#31A6FF] text-white w-[100px] rounded text-lg"
+          >
+          Reset
+        </button>
       </form>
 
       {/* Selected Filters */}
@@ -247,7 +261,7 @@ bg-[#F8FAFC]">
   {/* Image */}
   <div className="flex-1 min-w-[250px] flex flex-col justify-center items-center order-1 md:order-2">
     <div className="w-full flex flex-row justify-between p-2">
-    <div className="text-[#676767]">${Math.floor(retreat.dates[0].priceFrom)},-</div>
+    <div className="text-[#0F182A]">${Math.floor(retreat.dates[0].priceFrom)},-</div>
     <div className="text-[#31A6FF]"><strong>{retreat.dates[0].startDate}</strong></div>
     </div>
     <div className="w-full flex justify-end items-center">
