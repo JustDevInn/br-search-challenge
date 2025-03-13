@@ -7,10 +7,10 @@ import { stringifyQuery } from "@/modules/shared/utils/jsUtils";
 import { MdOutlineDateRange } from "react-icons/md";
 import { BiCategory } from "react-icons/bi";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-
+import Spinner from './Spinner';
 
 const SearchPage = ({ searchResults, searchState }) => {
-  console.log("SearchPage Props", searchResults, searchState);
+  // console.log("SearchPage Props", searchResults, searchState);
 
   const router = useRouter(); // For navigation
   const [searchQuery, setSearchQuery] = useState(searchState?.searchQuery || "");
@@ -138,11 +138,11 @@ const SearchPage = ({ searchResults, searchState }) => {
     }
   };
 
-
-
-
-
-
+// Spinner
+const showSpinner = () => {
+  setLoading(true);
+  setTimeout(() => setLoading(false), 1500);
+};
 
   return (
     <div className="max-w-5xl mx-auto px-4">
@@ -152,7 +152,7 @@ const SearchPage = ({ searchResults, searchState }) => {
 
 {/* Navigation Search bar */}
       <div className="w-full">
-      <form onSubmit={(e) => e.preventDefault()} className="w-full mb-4 p-4 flex flex-col md:flex-row gap-4 justify-center items-center
+      <form onSubmit={(e) => e.preventDefault()} className="w-full p-2 flex flex-col md:flex-row gap-4 justify-center items-center
           bg-white rounded-full
             shadow-lg hover:shadow-blue-200 transition-shadow duration-300">
   
@@ -182,6 +182,7 @@ const SearchPage = ({ searchResults, searchState }) => {
                 <li
                   key={location.id}
                   onClick={() => {
+                    showSpinner();
                     setSelectedLocation(location.label);
                     setLocationQuery(location.label);
                     setLocationResults([]);
@@ -221,11 +222,12 @@ const SearchPage = ({ searchResults, searchState }) => {
                 <li
                   key={category.id}
                   onClick={() => {
+                    showSpinner();
                     setSelectedCategories(category.name);
                     setCategoriesQuery(category.name);
                     setCategoriesResults([]);
                   }}
-                  className="p-2 hover:bg-gray-200 cursor-pointer"
+                  className="p-2 bg-white  hover:bg-gray-200 cursor-pointer z-10"
                 >
                   {category.name}
                 </li>
@@ -261,64 +263,60 @@ const SearchPage = ({ searchResults, searchState }) => {
       </form>
     </div>
 
-      {/* Selected Filters */}
-      <div className={`flex flex-row text-[#676767] m-4 ${!selectedCategories && !selectedLocation ? "hidden" : ""}`}>
-      {/* Categories filter */}
-        <div className="flex flex-row p-3 rounded-full bg-[#31A6FF] text-white mx-1">
-          {selectedCategories && <p className="">{selectedCategories}</p>}
-          <div>
-            <button 
-            onClick={() => {
-              setSearchQuery("");
-              setSelectedCategories("");
-              setCategoriesQuery("");
-              setCategoriesResults([]);
-              setLocationQuery("");
-              setLocationResults([]);
-              updateResults();
-              }}
-            className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold"
-            >x
-            </button>
-            <div className="pl-2"></div>
-          </div>
-        </div>
+{/* Selected Filters */}
+<div className={`flex flex-row text-[#676767] m-4 gap-2`}>
+  
+  {/* Categories Filter (Only show if selectedCategories is set) */}
+  {selectedCategories && (
+    <div className="flex flex-row p-3 rounded-full bg-[#31A6FF] text-white">
+      <p>{selectedCategories}</p>
+      <button 
+        onClick={() => {
+          setSelectedCategories("");
+          setCategoriesQuery("");
+          setCategoriesResults([]);
+          updateResults();
+        }}
+        className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold"
+      >
+        x
+      </button>
+    </div>
+  )}
 
-        {/* Location filter */}
-        <div className="flex flex-row p-3 rounded-full bg-[#31A6FF] text-white mx-1">
-        {selectedLocation && <p className="">{selectedLocation}</p>}
-        <div>
-            <button 
-            onClick={() => {
-              setSearchQuery("");
-              setSelectedLocation("");
-              setCategoriesQuery("");
-              setCategoriesResults([]);
-              setLocationQuery("");
-              setLocationResults([]);
-              updateResults();
-              }}
-            className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold">x</button>
-            <div className="pl-2"></div>
-          </div>
-        </div>
-      </div>
+  {/* Location Filter (Only show if selectedLocation is set) */}
+  {selectedLocation && (
+    <div className="flex flex-row p-3 rounded-full bg-[#31A6FF] text-white">
+      <p>{selectedLocation}</p>
+      <button 
+        onClick={() => {
+          setSelectedLocation("");
+          setLocationQuery("");
+          setLocationResults([]);
+          updateResults();
+        }}
+        className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold"
+      >
+        x
+      </button>
+    </div>
+  )}
+
+</div>
 
       {/* Error Message */}
       {error && <div className="text-red-500">{error}</div>}
 
       {/* Results */}
       {loading ? (
-        <div className="text-center">Loading...</div>
+        <div className="flex justify-center items-center">Loading... <Spinner /></div>
       ) : (
-        <ul className="p-5">
-          {retreats.length > 0 ? (
-            retreats.map((retreat) => (
-              <li key={retreat.id}>
-
-
+  <ul className="p-5">
+    {retreats.length > 0 ? (
+      retreats.map((retreat) => (
+    <li key={retreat.id}>
 {/* Card */}
-<div className="w-full rounded-xl flex flex-col md:flex-row mx-auto p-2 m-5 gap-4 flex-wrap
+<div className="w-full rounded-xl flex flex-col md:flex-row mx-auto p-5 gap-4 flex-wrap
 bg-[#F8FAFC]">
   
   {/* Card info */}
