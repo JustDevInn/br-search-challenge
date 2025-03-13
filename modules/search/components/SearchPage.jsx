@@ -3,6 +3,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { stringifyQuery } from "@/modules/shared/utils/jsUtils";
+// Icons
+import { MdOutlineDateRange } from "react-icons/md";
+import { BiCategory } from "react-icons/bi";
+import { FaLocationCrosshairs } from "react-icons/fa6";
+
 
 const SearchPage = ({ searchResults, searchState }) => {
   console.log("SearchPage Props", searchResults, searchState);
@@ -26,6 +31,34 @@ const SearchPage = ({ searchResults, searchState }) => {
   const locationDropdownRef = useRef(null);
   const categoriesDropdownRef = useRef(null);
 
+
+    // Load categories once
+    useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const response = await fetch(`/api/categories?query=`);
+          if (response.ok) {
+            const data = await response.json();
+            setCategories(data.items || []);
+          }
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
+  
+      fetchCategories();
+    }, []);
+
+// Load the initial set of search results when the page first loads.
+    useEffect(() => {
+      if (searchResults?.hits?.length > 0) {
+        console.log("Using preloaded search results.");
+        setRetreats(searchResults.hits);
+      }
+    }, [searchResults]);
+
+
+  // Closing dropdown menu's for both location and category
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (locationDropdownRef.current && !locationDropdownRef.current.contains(event.target)) {
@@ -48,38 +81,17 @@ const SearchPage = ({ searchResults, searchState }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Load categories once
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(`/api/categories?query=`);
-        if (response.ok) {
-          const data = await response.json();
-          setCategories(data.items || []);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
 
-    fetchCategories();
-  }, []);
 
+  // Whenever a category or location is selected, update the results.
   useEffect(() => {
     if (!selectedCategories && !selectedLocation) return;
     updateResults();  
   }, [selectedCategories, selectedLocation]);
-  
 
 
-  // Ensure initial results are shown
-  useEffect(() => {
-    if (searchResults?.hits?.length > 0) {
-      console.log("Using preloaded search results.");
-      setRetreats(searchResults.hits);
-    }
-  }, [searchResults]);
-
+// Function to update the search results based on selected filters (category, location, or search query).
+// It updates the URL so that the search state is preserved even if the page reloads.
   const updateResults = () => {
     const updatedSearchState = {
       ...searchState,
@@ -95,6 +107,8 @@ const SearchPage = ({ searchResults, searchState }) => {
   };
 
 
+
+// Calls the API with the user's input to get matching categories and updates the dropdown list.
   const handleCategorySearch = async (query) => {
     setCategoriesQuery(query);
     if (!query.trim()) {
@@ -136,57 +150,31 @@ const SearchPage = ({ searchResults, searchState }) => {
         <strong>Search for retreats</strong>
       </h1>
 
-      {/* Search Form */}
-      <form onSubmit={(e) => e.preventDefault()} className="mb-4 flex flex-col md:flex-row gap-4 w-full justify-center items-center">
-        {/* Search Bar */}
-        <input
-          type="text"
-          placeholder="Search retreats..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            updateResults();
-          }}
-          className="border p-2 text-gray-500 capitalize"
-        />
-
-        {/* Category Dropdown */}
-        <div className="relative" ref={categoriesDropdownRef}>
-        <input
-          type="text"
-          placeholder="Filter by category..."
-          value={categoriesQuery}
-          onChange={(e) => handleCategorySearch(e.target.value)}
-          className="border p-2 text-gray-500"
-        />
-           {/* Dropdown */}
-           {categoriesResults.length > 0 && (
-            <ul className="absolute bg-white text-black border t-1 w-full z-10 shadow-md">
-              {categoriesResults.map((category) => (
-                <li
-                  key={category.id}
-                  onClick={() => {
-                    setSelectedCategories(category.name);
-                    setCategoriesQuery(category.name);
-                    setCategoriesResults([]);
-                  }}
-                  className="p-2 hover:bg-gray-200 cursor-pointer"
-                >
-                  {category.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        {/* Location Filter */}
-        <div className="relative" ref={locationDropdownRef}>
+{/* Navigation Search bar */}
+      <div className="w-full">
+      <form onSubmit={(e) => e.preventDefault()} className="w-full mb-4 p-4 flex flex-col md:flex-row gap-4 justify-center items-center
+          bg-white rounded-full
+            shadow-lg hover:shadow-blue-200 transition-shadow duration-300">
+  
+  {/* Location Bar*/}
+       <div className="relative py-2 px-4 group hover:rounded-full hover:bg-gray-200" ref={locationDropdownRef}>
+       <div className="flex flex-row">
+          <div className="flex flex-col">
+            <span className="pr-1 text-gray-400"><FaLocationCrosshairs />
+            </span>
+            <span className="pr-1"></span>
+          </div>
+        <div className="flex flex-col">
+          <p className="text-black font-sans text-sm font-semibold">Location</p>
           <input
             type="text"
-            placeholder="Filter by location..."
+            placeholder="Where are you going?"
             value={locationQuery}
             onChange={(e) => handleLocationSearch(e.target.value)}
-            className="border p-2 text-gray-500"
+            className="text-gray-500 font-semibold bg-transparent focus:outline-none"
           />
+          </div>
+          </div>
           {/* Dropdown */}
           {locationResults.length > 0 && (
             <ul className="absolute bg-white text-black border t-1 w-full z-10 shadow-md">
@@ -206,28 +194,114 @@ const SearchPage = ({ searchResults, searchState }) => {
             </ul>
           )}
         </div>
-        <button
-          type="button"
-          onClick={() => {
-          setSearchQuery("");
-          setSelectedCategories("");
-          setCategoriesQuery("");
-          setCategoriesResults([]);
-          setSelectedLocation("");
-          setLocationQuery("");
-          setLocationResults([]);
-          updateResults();
+
+        {/* Category Bar */}
+      <div className="relative py-2 px-4 group hover:rounded-full hover:bg-gray-200" ref={categoriesDropdownRef}>
+        <div className="flex flex-row">
+          <div className="flex flex-col">
+            <span className="pr-1 text-gray-400"><BiCategory /></span>
+            <span className="pr-1"></span>
+          </div>
+        <div className="flex flex-col">
+          <p className="text-black font-sans text-sm font-semibold">Category</p>
+        
+        <input
+          type="text"
+          placeholder="What are you seeking?"
+          value={categoriesQuery}
+          onChange={(e) => handleCategorySearch(e.target.value)}
+          className="text-gray-500 font-semibold bg-transparent focus:outline-none"
+        />
+        </div>
+      </div>
+           {/* Dropdown */}
+           {categoriesResults.length > 0 && (
+            <ul className="absolute text-black border t-1 w-full z-10 shadow-md">
+              {categoriesResults.map((category) => (
+                <li
+                  key={category.id}
+                  onClick={() => {
+                    setSelectedCategories(category.name);
+                    setCategoriesQuery(category.name);
+                    setCategoriesResults([]);
+                  }}
+                  className="p-2 hover:bg-gray-200 cursor-pointer"
+                >
+                  {category.name}
+                </li>
+              ))}
+            </ul>
+          )}
+      </div>
+
+        {/* Search Bar */}
+      <div className="relative py-2 px-4 group hover:rounded-full hover:bg-gray-200">
+        <div className="flex flex-row">
+          <div className="flex flex-col">
+            <span className="pr-1 text-gray-400"><MdOutlineDateRange /></span>
+            <span className="pr-1"></span>
+          </div>
+          <div className="flex flex-col">
+            <p className="text-black font-sans text-sm font-semibold">Date</p>
+        <input
+          type="text"
+          placeholder="When are you going?"
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            updateResults();
           }}
-          className="bg-[#31A6FF] text-white w-[100px] rounded text-lg"
-          >
-          Reset
-        </button>
+          className="text-gray-500 font-semibold bg-transparent focus:outline-none"
+        />
+        </div>
+        </div>
+      </div>
+
+      
       </form>
+    </div>
 
       {/* Selected Filters */}
-      <div className={`text-[#676767] mb-4 ${!selectedCategories && !selectedLocation ? "hidden" : ""}`}>
-        {selectedCategories && <p>Selected Category: {selectedCategories}</p>}
-        {selectedLocation && <p>Selected Location: {selectedLocation}</p>}
+      <div className={`flex flex-row text-[#676767] m-4 ${!selectedCategories && !selectedLocation ? "hidden" : ""}`}>
+      {/* Categories filter */}
+        <div className="flex flex-row p-3 rounded-full bg-[#31A6FF] text-white mx-1">
+          {selectedCategories && <p className="">{selectedCategories}</p>}
+          <div>
+            <button 
+            onClick={() => {
+              setSearchQuery("");
+              setSelectedCategories("");
+              setCategoriesQuery("");
+              setCategoriesResults([]);
+              setLocationQuery("");
+              setLocationResults([]);
+              updateResults();
+              }}
+            className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold"
+            >x
+            </button>
+            <div className="pl-2"></div>
+          </div>
+        </div>
+
+        {/* Location filter */}
+        <div className="flex flex-row p-3 rounded-full bg-[#31A6FF] text-white mx-1">
+        {selectedLocation && <p className="">{selectedLocation}</p>}
+        <div>
+            <button 
+            onClick={() => {
+              setSearchQuery("");
+              setSelectedLocation("");
+              setCategoriesQuery("");
+              setCategoriesResults([]);
+              setLocationQuery("");
+              setLocationResults([]);
+              updateResults();
+              }}
+            className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold">x</button>
+            <div className="pl-2"></div>
+          </div>
+        </div>
       </div>
 
       {/* Error Message */}
