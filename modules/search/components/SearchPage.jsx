@@ -8,12 +8,17 @@ import { MdOutlineDateRange } from "react-icons/md";
 import { BiCategory } from "react-icons/bi";
 import { FaLocationCrosshairs } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
+import { CiLocationOn } from "react-icons/ci";
+import { FaStar } from "react-icons/fa";
+import { VscFlame } from "react-icons/vsc";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+
 // Components
 import Spinner from './Spinner';
 import DateSelection from "./DatePicker";
 
 const SearchPage = ({ searchResults, searchState }) => {
-  // console.log("SearchPage Props", searchResults, searchState);
+  console.log("SearchPage Props", searchResults, searchState);
 
   const router = useRouter(); // For navigation
   const [searchQuery, setSearchQuery] = useState(searchState?.searchQuery || "");
@@ -171,19 +176,29 @@ const showSpinner = () => {
 
 
   return (
-    <div className="max-w-5xl mx-auto px-4">
-      <h1 className="w-full text-4xl font-semibold my-4 flex justify-center text-[#31A6FF] pt-20 pb-10">
-        <strong>Search for retreats</strong>
+    <div className="max-w-5xl mx-auto  md:px-0">
+      {/* insert image here. */}
+      <div className="relative h-[300px] w-full bg-[url('/br-group-photo.avif')] bg-cover bg-center">
+       {/* Overlay (Optional, for better text contrast) */}
+       <div className="absolute inset-0 bg-black/20"></div>
+       <div className="relative z-10 text-center text-white">
+      <h1 className="text-4xl font-semibold pt-20 pb-5">
+        <strong>Retreats & Trainings</strong>
       </h1>
+      <h5 className="text-2xl font-semibold pb-5">
+        Discover stunning retreats across the world. Your journey awaits...</h5>
+        </div>
+      </div>
 
 {/* Navigation Search bar */}
-      <div className="w-full">
+    <div className="w-full relative z-10 -mt-10 ">
       <form onSubmit={(e) => e.preventDefault()} className="w-full p-2 flex flex-col md:flex-row gap-4 justify-center items-center
-          bg-white rounded-full
+          bg-white md:rounded-full py-4
             shadow-lg hover:shadow-blue-200 transition-shadow duration-300">
   
   {/* Location Bar*/}
-       <div className="relative py-2 px-4 group hover:rounded-full hover:bg-gray-200" ref={locationDropdownRef}>
+       <div className="flex justify-center items-center relative py-2 px-4 group hover:rounded-full hover:bg-gray-200 border-2 border-opacity-10 border-[#64748B] rounded-full
+       md:border-0 md:rounded-none" ref={locationDropdownRef}>
        <div className="flex flex-row">
           <div className="flex flex-col">
             <span className="pr-1 text-gray-400"><FaLocationCrosshairs />
@@ -223,7 +238,8 @@ const showSpinner = () => {
         </div>
 
         {/* Category Bar */}
-      <div className="relative py-2 px-4 group hover:rounded-full hover:bg-gray-200" ref={categoriesDropdownRef}>
+      <div className="flex justify-center items-center  relative py-2 px-4 group hover:rounded-full hover:bg-gray-200 border-2 border-opacity-10 border-[#64748B] rounded-full
+       md:border-0 md:rounded-none" ref={categoriesDropdownRef}>
         <div className="flex flex-row">
           <div className="flex flex-col">
             <span className="pr-1 text-gray-400"><BiCategory /></span>
@@ -263,7 +279,8 @@ const showSpinner = () => {
       </div>
 
         {/* Date selection */}
-      <div className="relative py-2 px-4 group hover:rounded-full hover:bg-gray-200">
+      <div className="flex justify-center items-center relative py-2 px-4 group hover:rounded-full hover:bg-gray-200 border-2 border-opacity-10 border-[#64748B] rounded-full
+       md:border-0 md:rounded-none">
         <div className="flex flex-row">
           <div className="flex flex-col">
             <span className="pr-1 text-gray-400"><MdOutlineDateRange /></span>
@@ -302,7 +319,7 @@ const showSpinner = () => {
           setCategoriesResults([]);
           updateResults();
         }}
-        className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold"
+        className="pl-2 flex justify-end items-start text-sm hover:cursor-pointer font-bold"
       >
         x
       </button>
@@ -321,7 +338,7 @@ const showSpinner = () => {
           setLocationResults([]);
           updateResults();
         }}
-        className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold"
+        className="pl-2 flex justify-end items-start text-sm hover:cursor-pointer font-bold"
       >
         x
       </button>
@@ -339,7 +356,7 @@ const showSpinner = () => {
           setSelectedEndDate(null);
           updateResults(null, null);
         }}
-        className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold"
+        className="pl-2 flex justify-end items-start text-sm hover:cursor-pointer font-bold"
       >
         x
       </button>
@@ -357,45 +374,100 @@ const showSpinner = () => {
       ) : (
 
 
-<ul className="p-5">
+<ul className="">
     {retreats.length > 0 ? (
       retreats.map((retreat) => {
 return (
-  <li key={retreat.id} className="p-5">
+  <li key={retreat.id} className="p-2">
   {/* Card */}
-<div className="w-full rounded-xl flex flex-col md:flex-row mx-auto p-5 gap-4 flex-wrap
-bg-[#F8FAFC]">
+<article className="h-full w-full rounded-xl flex flex-col md:flex-row mx-auto p-5 gap-4 flex-wrap
+bg-white shadow-2xl hover:shadow-xl">
   
-  {/* Card info */}
-  <div className="md:w-1/2 order-2 md:order-1">
-  <div className="flex-1 min-w-[250px] flex flex-col justify-start items-start py-2">
-    <p className="text-[#0F182A]"><strong>{retreat.name}</strong></p>
-    <p className="text-[#0F182A] text-sm">{retreat.location?.[0]}</p>
-    <p className="text-[#676767] text-sm">{retreat.organizer}</p>
+{/* Card info */} 
+<div className="flex-1 md:flex-[3] order-2 md:py-2 flex justify-between flex-col">
+  <div className="flex-1 min-w-[250px] flex flex-col justify-start items-start">
+    <p className="text-[#475569] text-lg mb-4"><strong>{retreat.name}</strong></p>
+    <div className="flex flex-row items-center py-2 md:py-5 gap-1">
+        <CiLocationOn className="text-[#0F182A] text-md mr-1" />
+        <p className="text-[#0F182A] text-md">{retreat.location?.[0]}</p>
+    </div>
+    <div className="flex flex-row items-center">
+      <MdOutlineDateRange className="text-[#0F182A] mr-1 text-md" />
+      <div className="text-[#0F182A] text-md">{retreat.formattedDates}</div>
+    </div>
   </div>
-  <div>
-  <p className="text-[#0F182A] text-xs p-1 md:px-2 text-justify">{retreat.description}</p>
+  {/* Review */}
+    <div className="py-2 hidden md:block">
+      <p className="text-[#64748B] text-sm italic">"{retreat.snippet}..."</p>
+    </div>
+ 
+</div>
+
+{/* description */}
+<div className="flex-1 md:flex-[2] order-3 md:py-2">
+  <div className="text-[#475569] hidden md:block">
+    <p className="text-xs text-[#475569]">From:</p>
+    <p><strong>${Math.floor(retreat.dates[0].priceFrom)}</strong></p>
   </div>
+  <div className="flex flex-row py-2">
+    <VscFlame className="text-lg text-orange-400"/>
+    <p className="text-[#64748B] text-sm">{retreat.interestedPeople} people are interested</p>
   </div>
+  <div className="flex flex-row">
+    <IoIosCheckmarkCircleOutline className="text-lg text-green-700"/>
+    <p className="text-[#64748B] text-sm"><strong>FREE Cancelation</strong></p>
+  </div>
+  <div className="flex flex-row md:justify-start md:items-center py-2">
+    <div className="text-[#475569] text-sm"><strong>{Number(retreat.rating).toFixed(1)}</strong></div>
+    <FaStar className="text-[#31A6FF] mx-1"/>
+    <div className="text-[#64748B] text-sm ">({Math.floor(retreat.reviewCount)} reviews)</div>
+  </div>
+  <div className="py-2 md:hidden block">
+      <p className="text-[#64748B] text-sm">{retreat.snippet}...</p>
+  </div>
+  <div className="text-[#475569] block md:hidden py-2">
+    <p className="text-2xl"><strong>${Math.floor(retreat.dates[0].priceFrom)}</strong></p>
+  </div>
+  {/* buttons */}
+  <div className="flex flex-row justify-center md:items-start md:flex-col w-full py-2 gap-2">
+    <a 
+    href="https://bookretreats.com/r/4-day-juice-fasting-daily-spa-yoga-wellness-eco-retreat-bali" 
+    alt="specific page information"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="">
+      <button className="flex justify-center items-center w-[140px] md:w-[250px] text-sm hover:cursor-pointer font-bold p-3 rounded-full 
+      bg-white text-[#31A6FF] hover:bg-[#31A6FF] hover:text-white border-[#31A6FF] border">
+        Details
+      </button>
+    </a>
+    <a 
+    href="https://bookretreats.com/r/4-day-juice-fasting-daily-spa-yoga-wellness-eco-retreat-bali" 
+    alt="specific page information"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="">
+      <button className="flex justify-center items-center w-[140px] md:w-[250px] text-sm hover:cursor-pointer font-bold p-3 rounded-full 
+      bg-[#31A6FF] text-white">
+        Book now
+      </button>
+    </a>
+  </div>
+</div>
+
   {/* Image */}
-  <div className="flex-1 min-w-[250px] flex flex-col justify-center items-center order-1 md:order-2">
-    <div className="w-full flex flex-row justify-between p-2 text-sm">
-    <div className="text-[#0F182A]">${Math.floor(retreat.dates[0].priceFrom)},-</div>
-    <div className="flex flex-row">
-      <div className="text-gray-500"><strong>{retreat.dates[0].startDate}</strong></div>
-      <p className="text-black px-2"><strong>-</strong></p>
-      <div className="text-gray-500"><strong>{retreat.dates[0].endDate}</strong></div>
-    </div>
-    </div>
+  <div className="flex-1 md:flex-[2] flex flex-col justify-center items-center order-1">
 {/* Image */}
     <div className="relative w-full flex justify-end items-center">
       <button
-   
-    className="absolute top-5 right-5 text-xl cursor-pointer transition-colors duration-300"
-  >
-    <FaHeart className=""/>
-  </button>
-    
+        className="absolute top-5 right-5 text-xl cursor-pointer transition-colors duration-300">
+        <FaHeart />
+      </button>
+      <button
+        className="absolute top-5 left-5 text-xs cursor-pointer transition-colors duration-300
+        bg-gray-100 rounded-full px-2 py-1">
+        <p className="text-black uppercase font-normal"><strong>{retreat.ribbon?.text}</strong></p>
+      </button>
       {retreat.photos?.[0]?.url ? (
         <img
           src={`https://stage.bookretreats.com/${retreat.photos[0].url}`}
@@ -410,9 +482,9 @@ bg-[#F8FAFC]">
       )}
     </div>
 
-  </div>
 
-</div>
+  </div>
+</article>
 </li>);
 })
           ) : (

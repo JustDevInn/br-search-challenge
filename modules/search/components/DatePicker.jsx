@@ -24,7 +24,7 @@ const DateSelection = ({ onDateChange }) => {
   
 
   return (
-    <div className="relative py-2 px-4 group hover:rounded-full hover:bg-gray-200">
+    <div className="">
       <div className="flex flex-row">
         <div className="flex flex-col">
           <DatePicker
