@@ -7,7 +7,10 @@ import { stringifyQuery } from "@/modules/shared/utils/jsUtils";
 import { MdOutlineDateRange } from "react-icons/md";
 import { BiCategory } from "react-icons/bi";
 import { FaLocationCrosshairs } from "react-icons/fa6";
+import { FaHeart } from "react-icons/fa";
+// Components
 import Spinner from './Spinner';
+import DateSelection from "./DatePicker";
 
 const SearchPage = ({ searchResults, searchState }) => {
   // console.log("SearchPage Props", searchResults, searchState);
@@ -30,6 +33,9 @@ const SearchPage = ({ searchResults, searchState }) => {
 
   const locationDropdownRef = useRef(null);
   const categoriesDropdownRef = useRef(null);
+
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
 
 
     // Load categories once
@@ -90,21 +96,39 @@ const SearchPage = ({ searchResults, searchState }) => {
   }, [selectedCategories, selectedLocation]);
 
 
-// Function to update the search results based on selected filters (category, location, or search query).
-// It updates the URL so that the search state is preserved even if the page reloads.
-  const updateResults = () => {
-    const updatedSearchState = {
-      ...searchState,
-      scopes: {
-        category: selectedCategories !== "None selected" ? selectedCategories : undefined,
-        location: selectedLocation !== "None selected" ? selectedLocation : undefined,
-      },
-      searchQuery: searchQuery || undefined,
-    };
 
-    const queryString = stringifyQuery(updatedSearchState);
-    router.push(`/search?${queryString}`);
+  // Function to update the search results based on selected filters (category, location, or date picker).
+// It updates the URL so that the search state is preserved even if the page reloads.
+  const formatDate = (date) => {
+    if (!date) return undefined;
+    return date.getFullYear() + "-" + 
+           String(date.getMonth() + 1).padStart(2, "0") + "-" + 
+           String(date.getDate()).padStart(2, "0");
   };
+
+const updateResults = (selectedStartDate, selectedEndDate) => {
+
+  // Format dates for API
+  const formattedStartDate = formatDate(selectedStartDate);
+  const formattedEndDate = formatDate(selectedEndDate);
+
+  const updatedSearchState = {
+    ...searchState,
+    scopes: {
+      category: selectedCategories !== "None selected" ? selectedCategories : undefined,
+      location: selectedLocation !== "None selected" ? selectedLocation : undefined,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+    },
+    searchQuery: searchQuery || undefined,
+  };
+
+  const queryString = stringifyQuery(updatedSearchState);
+  const url = `/search?${queryString}`;
+  console.log("Fetching from URL:", url);  // <== ADD THIS
+  router.push(url);
+};
+
 
 
 
@@ -143,6 +167,8 @@ const showSpinner = () => {
   setLoading(true);
   setTimeout(() => setLoading(false), 1500);
 };
+
+
 
   return (
     <div className="max-w-5xl mx-auto px-4">
@@ -184,7 +210,7 @@ const showSpinner = () => {
                   onClick={() => {
                     showSpinner();
                     setSelectedLocation(location.label);
-                    setLocationQuery(location.label);
+                    setLocationQuery("");
                     setLocationResults([]);
                   }}
                   className="p-2 hover:bg-gray-200 cursor-pointer"
@@ -224,7 +250,7 @@ const showSpinner = () => {
                   onClick={() => {
                     showSpinner();
                     setSelectedCategories(category.name);
-                    setCategoriesQuery(category.name);
+                    setCategoriesQuery("");
                     setCategoriesResults([]);
                   }}
                   className="p-2 bg-white  hover:bg-gray-200 cursor-pointer z-10"
@@ -236,7 +262,7 @@ const showSpinner = () => {
           )}
       </div>
 
-        {/* Search Bar */}
+        {/* Date selection */}
       <div className="relative py-2 px-4 group hover:rounded-full hover:bg-gray-200">
         <div className="flex flex-row">
           <div className="flex flex-col">
@@ -245,16 +271,14 @@ const showSpinner = () => {
           </div>
           <div className="flex flex-col">
             <p className="text-black font-sans text-sm font-semibold">Date</p>
-        <input
-          type="text"
-          placeholder="When are you going?"
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            updateResults();
-          }}
-          className="text-gray-500 font-semibold bg-transparent focus:outline-none"
-        />
+            <DateSelection
+              onDateChange={(start, end) => {
+                setSelectedStartDate(start);
+                setSelectedEndDate(end);
+                showSpinner();
+                updateResults(start, end);
+                }}
+              />
         </div>
         </div>
       </div>
@@ -272,6 +296,7 @@ const showSpinner = () => {
       <p>{selectedCategories}</p>
       <button 
         onClick={() => {
+          showSpinner();
           setSelectedCategories("");
           setCategoriesQuery("");
           setCategoriesResults([]);
@@ -290,10 +315,29 @@ const showSpinner = () => {
       <p>{selectedLocation}</p>
       <button 
         onClick={() => {
+          showSpinner();
           setSelectedLocation("");
           setLocationQuery("");
           setLocationResults([]);
           updateResults();
+        }}
+        className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold"
+      >
+        x
+      </button>
+    </div>
+  )}
+  
+    {/* Date Filter (Only Show If Dates Are Selected) */}
+    {selectedStartDate && selectedEndDate && (
+    <div className="flex flex-row p-3 rounded-full bg-[#31A6FF] text-white">
+      <p>{selectedStartDate.toISOString().split("T")[0]} / {selectedEndDate.toISOString().split("T")[0]}</p>
+      <button 
+        onClick={() => {
+          showSpinner();
+          setSelectedStartDate(null);
+          setSelectedEndDate(null);
+          updateResults(null, null);
         }}
         className="pl-2 flex justify-end items-start text-xs hover:cursor-pointer font-bold"
       >
@@ -311,11 +355,14 @@ const showSpinner = () => {
       {loading ? (
         <div className="flex justify-center items-center">Loading... <Spinner /></div>
       ) : (
-  <ul className="p-5">
+
+
+<ul className="p-5">
     {retreats.length > 0 ? (
-      retreats.map((retreat) => (
-    <li key={retreat.id}>
-{/* Card */}
+      retreats.map((retreat) => {
+return (
+  <li key={retreat.id} className="p-5">
+  {/* Card */}
 <div className="w-full rounded-xl flex flex-col md:flex-row mx-auto p-5 gap-4 flex-wrap
 bg-[#F8FAFC]">
   
@@ -332,11 +379,23 @@ bg-[#F8FAFC]">
   </div>
   {/* Image */}
   <div className="flex-1 min-w-[250px] flex flex-col justify-center items-center order-1 md:order-2">
-    <div className="w-full flex flex-row justify-between p-2">
+    <div className="w-full flex flex-row justify-between p-2 text-sm">
     <div className="text-[#0F182A]">${Math.floor(retreat.dates[0].priceFrom)},-</div>
-    <div className="text-[#31A6FF]"><strong>{retreat.dates[0].startDate}</strong></div>
+    <div className="flex flex-row">
+      <div className="text-gray-500"><strong>{retreat.dates[0].startDate}</strong></div>
+      <p className="text-black px-2"><strong>-</strong></p>
+      <div className="text-gray-500"><strong>{retreat.dates[0].endDate}</strong></div>
     </div>
-    <div className="w-full flex justify-end items-center">
+    </div>
+{/* Image */}
+    <div className="relative w-full flex justify-end items-center">
+      <button
+   
+    className="absolute top-5 right-5 text-xl cursor-pointer transition-colors duration-300"
+  >
+    <FaHeart className=""/>
+  </button>
+    
       {retreat.photos?.[0]?.url ? (
         <img
           src={`https://stage.bookretreats.com/${retreat.photos[0].url}`}
@@ -350,11 +409,12 @@ bg-[#F8FAFC]">
         </div>
       )}
     </div>
+
   </div>
 
 </div>
-</li>
-            ))
+</li>);
+})
           ) : (
             <p>No results found.</p>
           )}
