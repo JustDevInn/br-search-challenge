@@ -473,7 +473,7 @@ bg-white shadow-2xl hover:shadow-xl">
           src={`https://stage.bookretreats.com/${retreat.photos[0].url}`}
           id={retreat.photos[0].id}
           alt={retreat.photos[0].altText || "Retreat Image"}
-          className="w-full h-[200px] md:h-[220px] object-cover"
+          className="w-full h-[200px] md:h-[220px] object-cover rounded-2xl"
         />
       ) : (
         <div className="w-full h-[200px] md:w-[300px] md:h-[220px] bg-gray-300 flex justify-center items-center">
