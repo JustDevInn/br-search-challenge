@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HiMenuAlt2 } from "react-icons/hi";
 import { GrYoga } from "react-icons/gr";
-import Link from "next/link";
+// import Link from "next/link";
 import { FaHeart } from "react-icons/fa";
 import { useWishlistContext } from "@/modules/search/context/WishlistContext";
 
