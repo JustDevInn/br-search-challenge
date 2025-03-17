@@ -25,7 +25,7 @@ const Navbar = () => {
     }, []);
 
     return (
-        <div className="w-full shadow-lg px-10 py-5 bg-white">
+        <div className="w-full shadow-lg px-10 py-5 bg-white sticky top-0 z-50">
             {/* Desktop Navbar */}
             <div className='hidden md:flex justify-between items-center'>
                 <div className="flex items-center">
