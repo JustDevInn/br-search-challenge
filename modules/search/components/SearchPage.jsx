@@ -17,8 +17,15 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import Spinner from './Spinner';
 import DateSelection from "./DatePicker";
 
+// context
+import { useWishlistContext } from "../context/WishlistContext";  // Import Wishlist Context
+
 const SearchPage = ({ searchResults, searchState }) => {
   console.log("SearchPage Props", searchResults, searchState);
+
+  // context
+  const { isFavorite, addToFavorites, removeFromFavorites } = useWishlistContext();
+// djdjjd
 
   const router = useRouter(); // For navigation
   const [searchQuery, setSearchQuery] = useState(searchState?.searchQuery || "");
@@ -461,10 +468,20 @@ bg-white shadow-2xl hover:shadow-xl">
   <div className="flex-1 md:flex-[2] flex flex-col justify-center items-center order-1">
 {/* Image */}
     <div className="relative w-full flex justify-end items-center">
-      <button
-        className="absolute top-5 right-5 text-xl cursor-pointer transition-colors duration-300">
-        <FaHeart />
-      </button>
+    <button
+  onClick={(e) => {
+    e.preventDefault();
+    if (isFavorite(retreat.id)) {
+      removeFromFavorites(retreat.id);
+    } else {
+      addToFavorites(retreat);
+    }
+  }}
+  className="absolute top-5 right-5 text-xl cursor-pointer transition-colors duration-300"
+>
+  <FaHeart className={isFavorite(retreat.id) ? "text-red-500" : "text-white"} />
+</button>
+
       <button
         className="absolute top-5 left-5 text-xs cursor-pointer transition-colors duration-300
         bg-gray-100 rounded-full px-2 py-1">
