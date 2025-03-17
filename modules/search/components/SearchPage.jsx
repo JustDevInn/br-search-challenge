@@ -176,9 +176,9 @@ const showSpinner = () => {
 
 
   return (
-    <div className="max-w-5xl mx-auto  md:px-0">
+  <div className="max-w-6xl mx-auto rounded-2xl overflow-hidden">
       {/* insert image here. */}
-      <div className="relative h-[300px] w-full bg-[url('/br-group-photo.avif')] bg-cover bg-center">
+      <div className="mt-3 relative h-[300px] w-full bg-[url('/br-group-photo.avif')] bg-cover bg-center md:rounded-2xl overflow-hidden">
        {/* Overlay (Optional, for better text contrast) */}
        <div className="absolute inset-0 bg-black/20"></div>
        <div className="relative z-10 text-center text-white">
@@ -189,15 +189,15 @@ const showSpinner = () => {
         Discover stunning retreats across the world. Your journey awaits...</h5>
         </div>
       </div>
-
 {/* Navigation Search bar */}
-    <div className="w-full relative z-10 -mt-10 ">
+<div className="w-full flex justify-center">
+  <div className="md:w-11/12 w-full relative z-10 -mt-10 ">
       <form onSubmit={(e) => e.preventDefault()} className="w-full p-2 flex flex-col md:flex-row gap-4 justify-center items-center
           bg-white md:rounded-full py-4
             shadow-lg hover:shadow-blue-200 transition-shadow duration-300">
   
   {/* Location Bar*/}
-       <div className="flex justify-center items-center relative py-2 px-4 group hover:rounded-full hover:bg-gray-200 border-2 border-opacity-10 border-[#64748B] rounded-full
+    <div className="flex justify-center items-center relative py-2 px-4 group hover:rounded-full hover:bg-gray-200 border-2 border-opacity-10 border-[#64748B] rounded-full
        md:border-0 md:rounded-none" ref={locationDropdownRef}>
        <div className="flex flex-row">
           <div className="flex flex-col">
@@ -303,6 +303,8 @@ const showSpinner = () => {
       
       </form>
     </div>
+  </div>
+
 
 {/* Selected Filters */}
 <div className={`flex flex-row text-[#676767] m-4 gap-2`}>
@@ -374,7 +376,7 @@ const showSpinner = () => {
       ) : (
 
 
-<ul className="">
+<ul className="max-w-5xl mx-auto ">
     {retreats.length > 0 ? (
       retreats.map((retreat) => {
 return (
