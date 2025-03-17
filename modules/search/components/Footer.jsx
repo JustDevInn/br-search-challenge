@@ -150,8 +150,8 @@ const Footer = () => {
 </div>
         
 {/* bottom footer */}
-<section className='w-full h-[100px] text-sm flex flex-col md:flex-row justify-evenly items-center border-t border-opacity-50 border-gray-400'>
-        <p>&copy; BookRetreats.com 2025</p>
+<section className='w-full h-[100px] my-5 md:my-0 text-sm flex flex-col md:flex-row justify-evenly items-center border-t border-opacity-50 border-gray-400'>
+        <p className='py-5'>&copy; BookRetreats.com 2025</p>
 
     <div className="flex flex-row gap-4">
         <a href="https://www.instagram.com/yourprofile" target="_blank" rel="noopener noreferrer">
@@ -167,7 +167,7 @@ const Footer = () => {
         </a>
     </div>
 
-    <div className="flex flex-row gap-5 justify-center items-center text-gray-400">
+    <div className="flex flex-row gap-5 py-5 md:py-0 justify-center items-center text-gray-400">
         <a href="/terms-and-conditions" className="hover:text-gray-600 transition">
             Terms and Conditions
         </a>
