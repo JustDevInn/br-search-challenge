@@ -33,11 +33,11 @@ const Footer = () => {
                 <p><strong>by</strong></p>
             </div>
             <div className="flex items-center mb-4">
-                <a href="https://bookretreats.com/" target="_blank" rel="noopener noreferrer">
+                <a href="https://br-search-challenge-pq3n.vercel.app/search" target="_blank" rel="noopener noreferrer">
                 <img 
-                    src="/bookretreats-logo-number-1.svg" 
+                    src="/lotus.png" 
                     alt="BookRetreats" 
-                    className="w-[180px] cursor-pointer"
+                    className="w-[50px] h-[50px] cursor-pointer"
                 />
                 </a>
             </div>
@@ -151,7 +151,7 @@ const Footer = () => {
         
 {/* bottom footer */}
 <section className='w-full h-[100px] my-5 md:my-0 text-sm flex flex-col md:flex-row justify-evenly items-center border-t border-opacity-50 border-gray-400'>
-        <p className='py-5'>&copy; BookRetreats.com 2025</p>
+        <p className='py-5'>&copy; Booking retreat 2025</p>
 
     <div className="flex flex-row gap-4">
         <a href="https://www.instagram.com/yourprofile" target="_blank" rel="noopener noreferrer">

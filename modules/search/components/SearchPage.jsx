@@ -507,7 +507,8 @@ bg-white shadow-2xl hover:shadow-xl">
 </li>);
 })
           ) : (
-            <p>No results found.</p>
+            <p className="text-red-500">The API is currently disabled.</p>
+            // <p className="">No results found.</p>
           )}
         </ul>
       )}

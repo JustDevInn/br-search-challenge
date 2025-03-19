@@ -31,24 +31,24 @@ const Navbar = () => {
                 <div className="flex items-center">
                     <a href="/search">
                         <img 
-                            src="/bookretreats-logo-number-1.svg" 
-                            alt="BookRetreats" 
-                            className="w-[200px] cursor-pointer"
+                            src="/lotus.png" 
+                            alt="Booking retreat" 
+                            className="w-[75px] h-[75px] cursor-pointer"
                         />
                     </a>
                 </div>
 
                 {/* Navbar Links */}
                 <div className="flex flex-row gap-8 text-black cursor-pointer items-center">
-                    <a href="https://bookretreats.com/about" target="_blank" rel="noopener noreferrer" 
+                    <a href="#" target="_blank" rel="noopener noreferrer" 
                         className='py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]'>
                         About
                     </a>
-                    <a href="https://help.bookretreats.com/en/" target="_blank" rel="noopener noreferrer"
+                    <a href="#" target="_blank" rel="noopener noreferrer"
                         className='py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]'>
                         Help
                     </a>
-                    <a href="https://bookretreats.com/search?facets%5BpopularFilters%5D%5B0%5D=Featured&pageNumber=1&sortBy%5Bfield%5D=distance&sortBy%5Bdirection%5D=asc" 
+                    <a href="#" 
                         target="_blank" rel="noopener noreferrer"
                         className='py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]'>
                         Featured
@@ -69,7 +69,7 @@ const Navbar = () => {
                         </a>
                     </div>
 
-                    <a href="https://bookretreats.com/work-with-us" target="_blank" rel="noopener noreferrer"
+                    <a href="#" target="_blank" rel="noopener noreferrer"
                         className='py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]'>
                         Add Retreat
                     </a>
@@ -81,9 +81,9 @@ const Navbar = () => {
                 {/* Logo */}
                 <a href="/search">
                     <img 
-                        src="/bookretreats-logo-number-1.svg" 
-                        alt="BookRetreats" 
-                        className="w-[150px]"
+                        src="/lotus.png" 
+                        alt="Booking retreat" 
+                        className="w-[50px] h-[50px]"
                     />
                 </a>
 
@@ -101,9 +101,9 @@ const Navbar = () => {
             {/* Mobile Dropdown Menu */}
             {menuOpen && (
                 <div ref={menuRef} className="z-50 md:hidden absolute top-16 right-5 w-48 bg-white border shadow-lg rounded-lg p-4 flex flex-col gap-3 text-black">
-                    <a href="https://bookretreats.com/about" className="py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]">About</a>
-                    <a href="https://help.bookretreats.com/en/" className="py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]">Help</a>
-                    <a href="https://bookretreats.com/search?facets%5BpopularFilters%5D%5B0%5D=Featured&pageNumber=1&sortBy%5Bfield%5D=distance&sortBy%5Bdirection%5D=asc"
+                    <a href="#" className="py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]">About</a>
+                    <a href="#" className="py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]">Help</a>
+                    <a href="#"
                         className="py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]">
                         Featured
                     </a>
@@ -121,7 +121,7 @@ const Navbar = () => {
                         )}
                     </a>
 
-                    <a href="https://bookretreats.com/work-with-us" className="py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]">Add Retreat</a>
+                    <a href="#" className="py-2 px-4 hover:rounded-full hover:bg-[#F1F5F9]">Add Retreat</a>
                 </div>
             )}
         </div>
