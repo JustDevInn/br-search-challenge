@@ -33,7 +33,7 @@ const Navbar = () => {
                         <img 
                             src="/lotus.png" 
                             alt="Booking retreat" 
-                            className="w-[75px] h-[75px] cursor-pointer"
+                            className="w-[50px] h-[50px] cursor-pointer"
                         />
                     </a>
                 </div>
